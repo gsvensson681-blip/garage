@@ -8,629 +8,922 @@
 <meta name="apple-mobile-web-app-title" content="Garage">
 <meta name="theme-color" content="#0a0a0a">
 <title>Garage Training</title>
-<link rel="manifest" href="data:application/json;charset=utf-8,%7B%22name%22%3A%22Garage%20Training%22%2C%22short_name%22%3A%22Garage%22%2C%22start_url%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%230a0a0a%22%2C%22theme_color%22%3A%22%230a0a0a%22%7D">
 <style>
-);
-
 :root {
-  --bg: #0a0a0a;
-  --bg2: #111111;
-  --bg3: #1a1a1a;
-  --bg4: #222222;
-  --border: rgba(255,255,255,0.08);
-  --border2: rgba(255,255,255,0.15);
-  --text: #f0f0f0;
-  --text2: #888;
-  --text3: #555;
-  --accent: #c8f542;
-  --accent2: #a0cc2a;
-  --red: #ff4444;
-  --blue: #4499ff;
-  --radius: 12px;
-  --radius-sm: 8px;
+  --bg:#0a0a0a; --bg2:#111; --bg3:#1a1a1a; --bg4:#222;
+  --border:rgba(255,255,255,0.08); --border2:rgba(255,255,255,0.18);
+  --text:#f0f0f0; --text2:#888; --text3:#444;
+  --accent:#b8f03a; --accent-dim:rgba(184,240,58,0.12);
+  --red:#ff4455; --blue:#4499ff; --orange:#ff9944;
+  --r:12px; --rs:8px;
 }
-
-* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-html, body { height: 100%; background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, sans-serif; overflow: hidden; }
-
-.app { display: flex; flex-direction: column; height: 100vh; height: 100dvh; max-width: 480px; margin: 0 auto; }
-
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;overflow:hidden}
+.app{display:flex;flex-direction:column;height:100vh;height:100dvh;max-width:480px;margin:0 auto}
 /* NAV */
-.nav { display: flex; background: var(--bg2); border-top: 0.5px solid var(--border); padding: 8px 0 max(8px, env(safe-area-inset-bottom)); order: 2; flex-shrink: 0; }
-.nav-btn { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 6px 0; border: none; background: none; color: var(--text3); cursor: pointer; font-family: -apple-system, BlinkMacSystemFont, sans-serif; font-size: 10px; letter-spacing: 0.04em; transition: color 0.15s; }
-.nav-btn.active { color: var(--accent); }
-.nav-btn svg { width: 22px; height: 22px; stroke-width: 1.5; fill: none; stroke: currentColor; }
-
+.nav{display:flex;background:var(--bg2);border-top:0.5px solid var(--border);padding:6px 0 max(6px,env(safe-area-inset-bottom));order:2;flex-shrink:0}
+.nb{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:5px 0;border:none;background:none;color:var(--text3);cursor:pointer;font-family:inherit;font-size:9px;letter-spacing:0.04em;text-transform:uppercase;transition:color 0.15s}
+.nb.active{color:var(--accent)}
+.nb svg{width:20px;height:20px;stroke-width:1.5;fill:none;stroke:currentColor}
 /* SCREENS */
-.screens { flex: 1; overflow: hidden; position: relative; order: 1; }
-.screen { position: absolute; inset: 0; overflow-y: auto; overflow-x: hidden; display: none; padding: 0 0 24px; }
-.screen.active { display: block; }
-.screen::-webkit-scrollbar { display: none; }
-
+.screens{flex:1;overflow:hidden;position:relative;order:1}
+.screen{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;display:none;padding-bottom:20px}
+.screen.active{display:block}
+.screen::-webkit-scrollbar{display:none}
 /* HEADER */
-.header { padding: 16px 20px 12px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; background: var(--bg); z-index: 10; border-bottom: 0.5px solid var(--border); }
-.header-title { font-size: 18px; font-weight: 600; letter-spacing: -0.02em; }
-.header-sub { font-size: 12px; color: var(--text2); }
-
-/* WEEK ROW */
-.week-row { display: flex; gap: 6px; padding: 16px 20px 8px; overflow-x: auto; }
-.week-row::-webkit-scrollbar { display: none; }
-.week-chip { flex-shrink: 0; display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; padding: 8px 10px; border-radius: var(--radius-sm); border: 0.5px solid var(--border); background: var(--bg2); min-width: 48px; transition: all 0.15s; }
-.week-chip.active { background: var(--accent); border-color: var(--accent); }
-.week-chip.done-chip { border-color: rgba(200,245,66,0.3); }
-.week-chip-day { font-size: 10px; color: var(--text2); font-weight: 500; }
-.week-chip.active .week-chip-day { color: var(--bg); }
-.week-chip-name { font-size: 11px; font-weight: 600; color: var(--text); }
-.week-chip.active .week-chip-name { color: var(--bg); }
-.week-chip-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--accent); opacity: 0; }
-.week-chip.done-chip .week-chip-dot { opacity: 1; }
-.week-chip.active .week-chip-dot { background: var(--bg); opacity: 1; }
-
-/* DAY DETAIL */
-.day-focus { margin: 4px 20px 16px; font-size: 13px; color: var(--text2); }
-.muscle-tags { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 20px 16px; }
-.muscle-tag { font-size: 11px; padding: 4px 10px; border-radius: 20px; background: var(--bg3); color: var(--text2); border: 0.5px solid var(--border); }
-
-.ex-card { margin: 0 20px 8px; background: var(--bg2); border: 0.5px solid var(--border); border-radius: var(--radius); overflow: hidden; }
-.ex-header { padding: 12px 14px 8px; }
-.ex-title { font-size: 14px; font-weight: 600; }
-.ex-note { font-size: 12px; color: var(--text2); margin-top: 3px; }
-.ex-sets-row { display: flex; gap: 0; border-top: 0.5px solid var(--border); }
-.set-cell { flex: 1; display: flex; flex-direction: column; align-items: center; padding: 8px 4px; border-right: 0.5px solid var(--border); }
-.set-cell:last-child { border-right: none; }
-.set-cell-label { font-size: 10px; color: var(--text3); margin-bottom: 4px; font-family: ui-monospace, monospace; }
-.set-target { font-size: 12px; color: var(--text); font-family: ui-monospace, monospace; }
-.set-target span { color: var(--accent); }
-
-.log-btn { display: flex; align-items: center; justify-content: center; gap: 8px; margin: 16px 20px 0; padding: 14px; background: var(--accent); color: var(--bg); border: none; border-radius: var(--radius); font-size: 15px; font-weight: 600; cursor: pointer; font-family: -apple-system, BlinkMacSystemFont, sans-serif; transition: opacity 0.15s; }
-.log-btn:active { opacity: 0.8; }
-
-/* REST DAY */
-.rest-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px 20px; gap: 12px; }
-.rest-icon { font-size: 48px; }
-.rest-title { font-size: 20px; font-weight: 600; }
-.rest-sub { font-size: 14px; color: var(--text2); text-align: center; }
-
+.hdr{padding:14px 16px 10px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:var(--bg);z-index:10;border-bottom:0.5px solid var(--border)}
+.hdr-title{font-size:17px;font-weight:700;letter-spacing:-0.02em}
+.hdr-sub{font-size:11px;color:var(--text2);margin-top:1px}
+/* CARDS */
+.card{background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--r);overflow:hidden;margin:0 14px 8px}
+.card-header{padding:10px 12px 8px;display:flex;justify-content:space-between;align-items:flex-start}
+.card-title{font-size:13px;font-weight:600}
+.card-sub{font-size:11px;color:var(--text2);margin-top:2px}
+/* WEEK CHIPS */
+.week-row{display:flex;gap:5px;padding:12px 14px 6px;overflow-x:auto}
+.week-row::-webkit-scrollbar{display:none}
+.wc{flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:7px 9px;border-radius:var(--rs);border:0.5px solid var(--border);background:var(--bg2);min-width:44px;transition:all 0.15s}
+.wc.sel{background:var(--accent);border-color:var(--accent)}
+.wc.done{border-color:rgba(184,240,58,0.35)}
+.wc-day{font-size:9px;color:var(--text2);font-weight:500;text-transform:uppercase}
+.wc.sel .wc-day,.wc.sel .wc-name{color:#000}
+.wc-name{font-size:11px;font-weight:600;color:var(--text)}
+.wc-dot{width:4px;height:4px;border-radius:50%;background:var(--accent);opacity:0}
+.wc.done .wc-dot{opacity:1}
+.wc.sel .wc-dot{background:#000;opacity:1}
+/* TAGS */
+.tags{display:flex;flex-wrap:wrap;gap:5px;padding:0 14px 12px}
+.tag{font-size:10px;padding:3px 8px;border-radius:20px;background:var(--bg3);color:var(--text2);border:0.5px solid var(--border)}
+/* EX PREVIEW CARD */
+.ex-preview{margin:0 14px 7px;background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--r);overflow:hidden}
+.ex-p-head{padding:9px 12px 6px;border-bottom:0.5px solid var(--border)}
+.ex-p-name{font-size:13px;font-weight:600}
+.ex-p-note{font-size:11px;color:var(--text2);margin-top:2px}
+.ex-p-sets{display:flex}
+.set-col{flex:1;padding:7px 4px;text-align:center;border-right:0.5px solid var(--border)}
+.set-col:last-child{border-right:none}
+.set-col-lbl{font-size:9px;color:var(--text3);margin-bottom:3px;font-variant-numeric:tabular-nums}
+.set-col-val{font-size:11px;color:var(--text);font-variant-numeric:tabular-nums}
+.set-col-val span{color:var(--accent)}
+/* BUTTONS */
+.btn-main{display:flex;align-items:center;justify-content:center;gap:7px;margin:12px 14px 0;padding:13px;background:var(--accent);color:#000;border:none;border-radius:var(--r);font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;transition:opacity 0.15s;letter-spacing:-0.01em}
+.btn-main:active{opacity:0.8}
+.btn-sec{display:flex;align-items:center;justify-content:center;gap:7px;margin:8px 14px 0;padding:11px;background:var(--bg3);color:var(--text);border:0.5px solid var(--border);border-radius:var(--r);font-size:13px;font-weight:500;cursor:pointer;font-family:inherit;transition:opacity 0.15s}
+.btn-sec:active{opacity:0.7}
 /* LOG SCREEN */
-.log-day-title { font-size: 22px; font-weight: 600; padding: 16px 20px 4px; letter-spacing: -0.02em; }
-.log-focus { font-size: 13px; color: var(--text2); padding: 0 20px 16px; }
-
-.log-ex-card { margin: 0 20px 10px; background: var(--bg2); border: 0.5px solid var(--border); border-radius: var(--radius); overflow: hidden; }
-.log-ex-title { font-size: 14px; font-weight: 600; padding: 12px 14px 8px; border-bottom: 0.5px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
-.log-ex-note { font-size: 11px; color: var(--text2); font-weight: 400; }
-.log-set-row { display: flex; align-items: center; gap: 10px; padding: 8px 14px; border-bottom: 0.5px solid var(--border); transition: background 0.15s; }
-.log-set-row:last-child { border-bottom: none; }
-.log-set-row.set-done { background: rgba(200,245,66,0.05); }
-.log-set-num { font-size: 11px; color: var(--text3); font-family: ui-monospace, monospace; min-width: 28px; }
-.log-inputs { display: flex; gap: 6px; flex: 1; }
-.log-input { flex: 1; background: var(--bg3); border: 0.5px solid var(--border); border-radius: 6px; color: var(--text); font-size: 15px; font-family: ui-monospace, monospace; padding: 8px 10px; text-align: center; width: 100%; -webkit-appearance: none; }
-.log-input:focus { outline: none; border-color: var(--accent); }
-.log-input::placeholder { color: var(--text3); }
-.log-input-label { font-size: 10px; color: var(--text3); text-align: center; margin-top: 3px; }
-.log-check { width: 32px; height: 32px; border-radius: 50%; border: 1.5px solid var(--border2); background: none; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; transition: all 0.15s; }
-.log-check.checked { background: var(--accent); border-color: var(--accent); }
-.log-check svg { width: 16px; height: 16px; stroke: var(--bg2); fill: none; stroke-width: 2.5; }
-
-.note-section { margin: 4px 20px 0; }
-.note-label { font-size: 11px; color: var(--text3); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.06em; }
-.note-input { width: 100%; background: var(--bg2); border: 0.5px solid var(--border); border-radius: var(--radius-sm); color: var(--text); font-size: 14px; font-family: -apple-system, BlinkMacSystemFont, sans-serif; padding: 10px 12px; resize: none; min-height: 70px; }
-.note-input:focus { outline: none; border-color: var(--border2); }
-
-.finish-btn { display: flex; align-items: center; justify-content: center; gap: 8px; margin: 16px 20px 0; padding: 16px; background: var(--accent); color: var(--bg); border: none; border-radius: var(--radius); font-size: 16px; font-weight: 700; cursor: pointer; font-family: -apple-system, BlinkMacSystemFont, sans-serif; letter-spacing: -0.01em; transition: opacity 0.15s; }
-.finish-btn:active { opacity: 0.8; }
-
+.log-ex-card{margin:0 14px 8px;background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--r);overflow:hidden}
+.log-ex-title{font-size:13px;font-weight:600;padding:10px 12px 8px;border-bottom:0.5px solid var(--border);display:flex;justify-content:space-between;align-items:center;gap:8px}
+.log-ex-note-tag{font-size:10px;color:var(--text2);font-weight:400;flex-shrink:0}
+.log-set-row{display:flex;align-items:center;gap:8px;padding:7px 12px;border-bottom:0.5px solid var(--border);transition:background 0.15s}
+.log-set-row:last-of-type{border-bottom:none}
+.log-set-row.sdone{background:var(--accent-dim)}
+.set-num{font-size:10px;color:var(--text3);min-width:22px;font-variant-numeric:tabular-nums}
+.log-inputs{display:flex;gap:5px;flex:1}
+.inp-wrap{flex:1;display:flex;flex-direction:column;gap:2px}
+.inp-lbl{font-size:9px;color:var(--text3);text-align:center;text-transform:uppercase;letter-spacing:0.04em}
+.log-inp{width:100%;background:var(--bg3);border:0.5px solid var(--border);border-radius:6px;color:var(--text);font-size:14px;padding:7px 6px;text-align:center;-webkit-appearance:none;font-family:inherit;font-variant-numeric:tabular-nums}
+.log-inp:focus{outline:none;border-color:var(--accent)}
+.log-inp::placeholder{color:var(--text3)}
+.chk{width:30px;height:30px;border-radius:50%;border:1.5px solid var(--border2);background:none;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:all 0.15s}
+.chk.on{background:var(--accent);border-color:var(--accent)}
+.chk svg{width:14px;height:14px;stroke:#000;fill:none;stroke-width:3}
+/* Per-exercise note */
+.ex-note-row{padding:7px 12px;border-top:0.5px solid var(--border);display:flex;flex-direction:column;gap:4px}
+.ex-note-lbl{font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:0.04em}
+.ex-note-inp{width:100%;background:var(--bg3);border:0.5px solid var(--border);border-radius:6px;color:var(--text);font-size:12px;padding:6px 8px;resize:none;min-height:42px;font-family:inherit}
+.ex-note-inp:focus{outline:none;border-color:var(--border2)}
+/* TIMER */
+.timer-bar{position:sticky;top:52px;z-index:9;background:var(--bg);border-bottom:0.5px solid var(--border);padding:8px 14px;display:flex;align-items:center;gap:10px}
+.timer-display{font-size:22px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--accent);min-width:62px}
+.timer-display.warning{color:var(--orange)}
+.timer-display.done-color{color:var(--red)}
+.timer-btns{display:flex;gap:6px;flex:1}
+.tbtn{flex:1;padding:6px 4px;border:0.5px solid var(--border);border-radius:var(--rs);background:var(--bg3);color:var(--text);font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;transition:background 0.15s}
+.tbtn:active{background:var(--bg4)}
+.tbtn.preset{font-size:10px;color:var(--text2)}
+.tbtn.go{background:var(--accent);color:#000;border-color:var(--accent)}
+/* STATS */
+.stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;padding:12px 14px}
+.stat-box{background:var(--bg2);border-radius:var(--rs);padding:12px 8px;text-align:center;border:0.5px solid var(--border)}
+.stat-num{font-size:24px;font-weight:700;color:var(--accent);font-variant-numeric:tabular-nums}
+.stat-lbl{font-size:10px;color:var(--text2);margin-top:3px}
 /* HISTORY */
-.stat-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; padding: 16px 20px; }
-.stat-box { background: var(--bg2); border-radius: var(--radius-sm); padding: 14px 12px; text-align: center; border: 0.5px solid var(--border); }
-.stat-num { font-size: 26px; font-weight: 600; color: var(--accent); font-family: ui-monospace, monospace; }
-.stat-lbl { font-size: 11px; color: var(--text2); margin-top: 4px; }
-
-.section-label { font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.08em; padding: 0 20px 10px; }
-.hist-item { margin: 0 20px 8px; background: var(--bg2); border: 0.5px solid var(--border); border-radius: var(--radius); padding: 12px 14px; display: flex; justify-content: space-between; align-items: flex-start; }
-.hist-left { display: flex; flex-direction: column; gap: 4px; }
-.hist-name { font-size: 14px; font-weight: 600; }
-.hist-focus { font-size: 12px; color: var(--text2); }
-.hist-meta { font-size: 11px; color: var(--text3); }
-.hist-date { font-size: 11px; color: var(--text3); font-family: ui-monospace, monospace; white-space: nowrap; margin-top: 2px; }
-
-.empty { display: flex; flex-direction: column; align-items: center; padding: 60px 20px; gap: 10px; }
-.empty-icon { font-size: 36px; opacity: 0.3; }
-.empty-text { font-size: 14px; color: var(--text2); text-align: center; }
-
+.hist-item{margin:0 14px 7px;background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--r);padding:10px 12px;cursor:pointer;transition:background 0.15s}
+.hist-item:active{background:var(--bg3)}
+.hist-top{display:flex;justify-content:space-between;align-items:flex-start}
+.hist-name{font-size:13px;font-weight:600}
+.hist-date{font-size:10px;color:var(--text3);font-variant-numeric:tabular-nums}
+.hist-focus{font-size:11px;color:var(--text2);margin-top:2px}
+.hist-meta{font-size:10px;color:var(--text3);margin-top:4px}
+/* EDIT LOG MODAL */
+.modal{position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:100;display:flex;flex-direction:column;justify-content:flex-end}
+.modal.hidden{display:none}
+.modal-sheet{background:var(--bg2);border-radius:16px 16px 0 0;max-height:85vh;overflow-y:auto;padding:16px 14px max(16px,env(safe-area-inset-bottom))}
+.modal-sheet::-webkit-scrollbar{display:none}
+.modal-title{font-size:15px;font-weight:700;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center}
+.modal-close{background:var(--bg3);border:none;color:var(--text2);width:28px;height:28px;border-radius:50%;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center}
 /* PROGRESS */
-.prog-item { margin: 0 20px 6px; display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; background: var(--bg2); border: 0.5px solid var(--border); border-radius: var(--radius-sm); }
-.prog-name { font-size: 13px; flex: 1; padding-right: 12px; }
-.prog-best { font-size: 13px; font-weight: 600; color: var(--accent); font-family: ui-monospace, monospace; }
-.prog-date { font-size: 10px; color: var(--text3); }
-
+.prog-item{margin:0 14px 6px;display:flex;justify-content:space-between;align-items:center;padding:9px 12px;background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--rs)}
+.prog-name{font-size:12px;flex:1;padding-right:10px;color:var(--text2)}
+.prog-best{font-size:13px;font-weight:700;color:var(--accent);font-variant-numeric:tabular-nums}
+.prog-date{font-size:9px;color:var(--text3)}
+/* MOBILITY */
+.mob-toggle{display:flex;gap:6px;padding:12px 14px 6px}
+.mob-btn{flex:1;padding:9px;border-radius:var(--rs);border:0.5px solid var(--border);background:var(--bg2);color:var(--text2);font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;text-align:center;transition:all 0.15s}
+.mob-btn.sel{background:var(--accent);color:#000;border-color:var(--accent)}
+.mob-section{margin:0 14px 6px}
+.mob-section-title{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;margin:10px 0 5px;padding:0 2px}
+.mob-ex{background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--rs);padding:9px 12px;margin-bottom:5px}
+.mob-ex-name{font-size:13px;font-weight:600}
+.mob-ex-detail{font-size:11px;color:var(--text2);margin-top:2px}
+.mob-ex-how{font-size:11px;color:var(--text3);margin-top:4px;line-height:1.5}
+/* JOURNAL */
+.journal-entry{margin:0 14px 7px;background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--r);padding:10px 12px;cursor:pointer}
+.journal-date{font-size:10px;color:var(--text3);margin-bottom:4px;font-variant-numeric:tabular-nums}
+.journal-preview{font-size:13px;color:var(--text2);line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.journal-write{margin:0 14px;background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--r);overflow:hidden}
+.journal-textarea{width:100%;background:transparent;border:none;color:var(--text);font-size:14px;padding:12px;resize:none;min-height:120px;font-family:inherit;line-height:1.6}
+.journal-textarea:focus{outline:none}
+.journal-toolbar{display:flex;justify-content:space-between;align-items:center;padding:8px 12px;border-top:0.5px solid var(--border)}
+.journal-date-input{background:none;border:none;color:var(--text3);font-size:11px;font-family:inherit}
 /* SETTINGS */
-.settings-section { padding: 0 20px; margin-bottom: 24px; }
-.settings-title { font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 10px; }
-.settings-btn { width: 100%; padding: 14px 16px; background: var(--bg2); border: 0.5px solid var(--border); border-radius: var(--radius-sm); color: var(--text); font-size: 14px; font-family: -apple-system, BlinkMacSystemFont, sans-serif; cursor: pointer; text-align: left; display: flex; align-items: center; gap: 12px; margin-bottom: 8px; transition: background 0.15s; }
-.settings-btn:active { background: var(--bg3); }
-.settings-btn svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 1.5; flex-shrink: 0; }
-.settings-btn.danger { color: var(--red); }
-.settings-info { font-size: 12px; color: var(--text2); line-height: 1.6; }
-.pwa-steps { background: var(--bg2); border: 0.5px solid var(--border); border-radius: var(--radius); padding: 14px 16px; margin-top: 10px; }
-.pwa-step { display: flex; gap: 10px; padding: 6px 0; font-size: 13px; color: var(--text2); }
-.pwa-step-num { color: var(--accent); font-weight: 600; flex-shrink: 0; font-family: ui-monospace, monospace; }
-
+.set-section{padding:0 14px;margin-bottom:20px}
+.set-title{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px}
+.set-btn{width:100%;padding:12px;background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--rs);color:var(--text);font-size:13px;font-family:inherit;cursor:pointer;text-align:left;display:flex;align-items:center;gap:10px;margin-bottom:6px;transition:background 0.15s}
+.set-btn:active{background:var(--bg3)}
+.set-btn svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.5;flex-shrink:0;color:var(--text2)}
+.set-btn.danger{color:var(--red)}
+.pwa-box{background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--r);padding:12px;margin-top:6px}
+.pwa-step{display:flex;gap:8px;padding:4px 0;font-size:12px;color:var(--text2)}
+.pwa-n{color:var(--accent);font-weight:700;flex-shrink:0}
+/* EDIT EXERCISE MODAL */
+.edit-inp{width:100%;background:var(--bg3);border:0.5px solid var(--border);border-radius:var(--rs);color:var(--text);font-size:14px;padding:9px 10px;margin-bottom:8px;font-family:inherit}
+.edit-inp:focus{outline:none;border-color:var(--accent)}
+.edit-lbl{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:4px}
+/* EMPTY */
+.empty{display:flex;flex-direction:column;align-items:center;padding:50px 16px;gap:8px}
+.empty-icon{font-size:32px;opacity:0.25}
+.empty-text{font-size:13px;color:var(--text2);text-align:center;line-height:1.5}
+/* SECTION LABEL */
+.slbl{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;padding:8px 14px 4px}
+/* REST */
+.rest-screen{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:50px 16px;gap:10px}
+.rest-icon{font-size:44px}
+.rest-title{font-size:20px;font-weight:700}
+.rest-sub{font-size:13px;color:var(--text2);text-align:center;line-height:1.6}
 /* TOAST */
-.toast { position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--bg3); border: 0.5px solid var(--border2); color: var(--text); padding: 10px 20px; border-radius: 30px; font-size: 13px; font-weight: 500; opacity: 0; transition: all 0.3s; pointer-events: none; z-index: 100; white-space: nowrap; }
-.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-.toast.success { color: var(--accent); }
+.toast{position:fixed;bottom:85px;left:50%;transform:translateX(-50%) translateY(16px);background:var(--bg3);border:0.5px solid var(--border2);color:var(--text);padding:9px 18px;border-radius:30px;font-size:12px;font-weight:500;opacity:0;transition:all 0.25s;pointer-events:none;z-index:200;white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast.ok{color:var(--accent)}
 </style>
 </head>
 <body>
-
 <div class="app">
   <div class="screens">
-    <!-- PROGRAM SCREEN -->
-    <div class="screen active" id="screen-program">
-      <div class="header">
-        <div>
-          <div class="header-title">Program</div>
-          <div class="header-sub" id="today-label">Laddar...</div>
-        </div>
+    <!-- PROGRAM -->
+    <div class="screen active" id="sc-program">
+      <div class="hdr">
+        <div><div class="hdr-title">Program</div><div class="hdr-sub" id="today-lbl">–</div></div>
       </div>
       <div class="week-row" id="weekRow"></div>
       <div id="dayContent"></div>
     </div>
-
-    <!-- LOG SCREEN -->
-    <div class="screen" id="screen-log">
+    <!-- LOG -->
+    <div class="screen" id="sc-log">
       <div id="logContent"></div>
     </div>
-
-    <!-- HISTORY SCREEN -->
-    <div class="screen" id="screen-history">
-      <div class="header"><div class="header-title">Historik</div></div>
+    <!-- MOBILITY -->
+    <div class="screen" id="sc-mobility">
+      <div class="hdr"><div class="hdr-title">Rörlighet</div></div>
+      <div class="mob-toggle">
+        <button class="mob-btn sel" onclick="setMob(15,this)">15 min</button>
+        <button class="mob-btn" onclick="setMob(30,this)">30 min</button>
+      </div>
+      <div id="mobContent"></div>
+    </div>
+    <!-- HISTORY -->
+    <div class="screen" id="sc-history">
+      <div class="hdr"><div class="hdr-title">Historik</div></div>
       <div class="stat-row" id="statsRow"></div>
-      <div class="section-label">Senaste pass</div>
+      <div class="slbl">Senaste pass</div>
       <div id="histList"></div>
     </div>
-
-    <!-- PROGRESS SCREEN -->
-    <div class="screen" id="screen-progress">
-      <div class="header"><div class="header-title">Progression</div></div>
-      <div style="padding:4px 0 8px"><div class="section-label">Bästa lyft per övning</div></div>
-      <div id="progList"></div>
+    <!-- JOURNAL -->
+    <div class="screen" id="sc-journal">
+      <div class="hdr">
+        <div class="hdr-title">Journal</div>
+        <button class="tbtn go" style="padding:6px 14px;border-radius:var(--rs);font-size:12px" onclick="openJournalNew()">+ Ny</button>
+      </div>
+      <div id="journalList"></div>
     </div>
-
-    <!-- SETTINGS SCREEN -->
-    <div class="screen" id="screen-settings">
-      <div class="header"><div class="header-title">Inställningar</div></div>
-      <div style="height:16px"></div>
-
-      <div class="settings-section">
-        <div class="settings-title">Data</div>
-        <button class="settings-btn" onclick="exportData()">
-          <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
-          Exportera träningsdata
+    <!-- SETTINGS -->
+    <div class="screen" id="sc-settings">
+      <div class="hdr"><div class="hdr-title">Inställningar</div></div>
+      <div style="height:10px"></div>
+      <div class="set-section">
+        <div class="set-title">Data</div>
+        <button class="set-btn" onclick="exportData()">
+          <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>Exportera träningsdata
         </button>
-        <label class="settings-btn" style="cursor:pointer">
-          <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
-          Importera träningsdata
+        <label class="set-btn" style="cursor:pointer">
+          <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>Importera träningsdata
           <input type="file" accept=".json" style="display:none" onchange="importData(event)">
         </label>
-        <button class="settings-btn danger" onclick="confirmReset()">
-          <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6M10 11v6M14 11v6M9 6V4h6v2"/></svg>
-          Återställ all data
+        <button class="set-btn danger" onclick="confirmReset()">
+          <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6M10 11v6M14 11v6M9 6V4h6v2"/></svg>Återställ all data
         </button>
       </div>
-
-      <div class="settings-section">
-        <div class="settings-title">Lägg till på hemskärmen</div>
-        <div class="pwa-steps">
-          <div style="font-size:13px;font-weight:600;margin-bottom:8px;color:var(--text)">iPhone / Safari</div>
-          <div class="pwa-step"><span class="pwa-step-num">1.</span>Öppna filen i Safari</div>
-          <div class="pwa-step"><span class="pwa-step-num">2.</span>Tryck på dela-ikonen längst ner</div>
-          <div class="pwa-step"><span class="pwa-step-num">3.</span>Välj "Lägg till på hemskärmen"</div>
-          <div style="height:10px"></div>
-          <div style="font-size:13px;font-weight:600;margin-bottom:8px;color:var(--text)">Android / Chrome</div>
-          <div class="pwa-step"><span class="pwa-step-num">1.</span>Öppna filen i Chrome</div>
-          <div class="pwa-step"><span class="pwa-step-num">2.</span>Tryck på menyn (tre punkter)</div>
-          <div class="pwa-step"><span class="pwa-step-num">3.</span>Välj "Lägg till på startskärmen"</div>
+      <div class="set-section">
+        <div class="set-title">Lägg till på hemskärmen</div>
+        <div class="pwa-box">
+          <div style="font-size:12px;font-weight:700;margin-bottom:6px">iPhone / Safari</div>
+          <div class="pwa-step"><span class="pwa-n">1.</span>Öppna sidan i Safari</div>
+          <div class="pwa-step"><span class="pwa-n">2.</span>Tryck dela-ikonen längst ner</div>
+          <div class="pwa-step"><span class="pwa-n">3.</span>Välj "Lägg till på hemskärmen"</div>
+          <div style="height:8px"></div>
+          <div style="font-size:12px;font-weight:700;margin-bottom:6px">Android / Chrome</div>
+          <div class="pwa-step"><span class="pwa-n">1.</span>Öppna i Chrome</div>
+          <div class="pwa-step"><span class="pwa-n">2.</span>Meny (tre punkter)</div>
+          <div class="pwa-step"><span class="pwa-n">3.</span>Välj "Lägg till på startskärmen"</div>
         </div>
       </div>
-
-      <div class="settings-section">
-        <div class="settings-title">Om</div>
-        <div class="settings-info">Garage Training — byggd för dig. Version 1.0<br>Data sparas lokalt i din webbläsare. Exportera regelbundet för backup.</div>
+      <div class="set-section">
+        <div class="set-title">Om</div>
+        <div style="font-size:12px;color:var(--text2);line-height:1.7">Garage Training v2.0 — byggd för dig.<br>Data sparas lokalt. Exportera regelbundet.</div>
       </div>
     </div>
   </div>
-
-  <!-- BOTTOM NAV -->
+  <!-- NAV -->
   <nav class="nav">
-    <button class="nav-btn active" onclick="showScreen('program')" id="nav-program">
-      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
-      Program
+    <button class="nb active" onclick="showScreen('program')" id="nav-program">
+      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Program
     </button>
-    <button class="nav-btn" onclick="showScreen('log')" id="nav-log">
-      <svg viewBox="0 0 24 24"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
-      Logga
+    <button class="nb" onclick="showScreen('log')" id="nav-log">
+      <svg viewBox="0 0 24 24"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>Logga
     </button>
-    <button class="nav-btn" onclick="showScreen('history')" id="nav-history">
-      <svg viewBox="0 0 24 24"><path d="M3 3v5h5M3.05 13A9 9 0 1 0 6 5.3L3 8"/><path d="M12 7v5l4 2"/></svg>
-      Historik
+    <button class="nb" onclick="showScreen('mobility')" id="nav-mobility">
+      <svg viewBox="0 0 24 24"><path d="M12 2a4 4 0 100 8 4 4 0 000-8zM6 21v-2a4 4 0 014-4h4a4 4 0 014 4v2"/><path d="M6 13l-2 4M18 13l2 4"/></svg>Rörlighet
     </button>
-    <button class="nav-btn" onclick="showScreen('progress')" id="nav-progress">
-      <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-      Progression
+    <button class="nb" onclick="showScreen('history')" id="nav-history">
+      <svg viewBox="0 0 24 24"><path d="M3 3v5h5M3.05 13A9 9 0 106 5.3L3 8"/><path d="M12 7v5l4 2"/></svg>Historik
     </button>
-    <button class="nav-btn" onclick="showScreen('settings')" id="nav-settings">
-      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
-      Inställningar
+    <button class="nb" onclick="showScreen('journal')" id="nav-journal">
+      <svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>Journal
+    </button>
+    <button class="nb" onclick="showScreen('settings')" id="nav-settings">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>Mer
     </button>
   </nav>
 </div>
-
+<!-- MODALS -->
+<div class="modal hidden" id="editLogModal">
+  <div class="modal-sheet" id="editLogSheet"></div>
+</div>
+<div class="modal hidden" id="editExModal">
+  <div class="modal-sheet" id="editExSheet"></div>
+</div>
+<div class="modal hidden" id="journalModal">
+  <div class="modal-sheet" id="journalSheet"></div>
+</div>
 <div class="toast" id="toast"></div>
 
 <script>
-const PROGRAM = [
+// ── DATA ──────────────────────────────────────────────────────────────────
+const DEFAULT_PROGRAM = [
   {day:1,name:"Push",focus:"Bröst · Axlar · Triceps",tags:["bröst","axlar","triceps"],exercises:[
-    {name:"Push up board – breda handtag",sets:4,reps:12,note:"Öka till 20 reps, sedan viktväst"},
-    {name:"Pike push ups",sets:4,reps:10,note:"Progression mot handstånds push ups"},
-    {name:"Diamond push ups",sets:3,reps:12},
-    {name:"Z-bar shoulder press",sets:3,reps:12,weight:22},
-    {name:"Lateral raises",sets:3,reps:15,weight:5},
-    {name:"Z-bar skullcrushers",sets:3,reps:12,weight:15}
+    {id:"p1e1",name:"Push up board – breda handtag",sets:4,reps:12,weight:0,note:"Öka till 20 reps, sedan viktväst"},
+    {id:"p1e2",name:"Pike push ups",sets:4,reps:10,weight:0,note:"Om för svårt: ersätt med vanliga push ups"},
+    {id:"p1e3",name:"Diamond push ups",sets:3,reps:12,weight:0,note:""},
+    {id:"p1e4",name:"Z-bar shoulder press",sets:3,reps:12,weight:22,note:""},
+    {id:"p1e5",name:"Lateral raises",sets:3,reps:15,weight:5,note:""},
+    {id:"p1e6",name:"Z-bar skullcrushers",sets:3,reps:12,weight:15,note:"Liggandes på golvet"}
   ]},
-  {day:2,name:"Pull",focus:"Rygg · Biceps · Nacke",tags:["rygg","biceps","nacke","forearms"],exercises:[
-    {name:"Towel pull ups",sets:4,reps:null,note:"Till failure"},
-    {name:"Hantel rows enarms",sets:4,reps:10,weight:10,note:"Byt till 18,5kg vid 12 reps"},
-    {name:"Z-bar bicep curls",sets:3,reps:12,weight:15},
-    {name:"Hammer curls",sets:3,reps:12,weight:8},
-    {name:"Necktrainer – 4 riktningar",sets:3,reps:15,note:"Lätt motstånd vecka 1–4"},
-    {name:"Farmer carries",sets:3,reps:null,note:"30 sek per set"},
-    {name:"Wrist curls / reverse",sets:2,reps:20,weight:5}
+  {day:2,name:"Pull",focus:"Rygg · Biceps · Nacke · Forearms",tags:["rygg","biceps","nacke","forearms"],exercises:[
+    {id:"p2e1",name:"Towel pull ups",sets:4,reps:0,weight:0,note:"Till failure – räkna reps"},
+    {id:"p2e2",name:"Hantel rows enarms",sets:4,reps:10,weight:10,note:"Byt till 18,5kg när du klarar 12 reps"},
+    {id:"p2e3",name:"Z-bar bicep curls",sets:3,reps:12,weight:15,note:""},
+    {id:"p2e4",name:"Hammer curls",sets:3,reps:12,weight:8,note:""},
+    {id:"p2e5",name:"Necktrainer – 4 riktningar",sets:3,reps:15,weight:0,note:"Lätt motstånd vecka 1–4"},
+    {id:"p2e6",name:"Farmer carries",sets:3,reps:0,weight:10,note:"30 sek per set"},
+    {id:"p2e7",name:"Wrist curls / reverse wrist curls",sets:2,reps:20,weight:5,note:""}
   ]},
   {day:3,name:"Legs",focus:"Underkropp · Vader · Höfter",tags:["quads","hamstrings","glutes","vader","höfter"],exercises:[
-    {name:"Bulgarian split squat",sets:4,reps:8,note:"Per ben"},
-    {name:"Romanian deadlift",sets:4,reps:10,weight:22},
-    {name:"Hip thrusts mot stolen",sets:4,reps:15,note:"Hantel på höften"},
-    {name:"Lateral band walks",sets:3,reps:20,note:"Per sida"},
-    {name:"Standing calf raises",sets:4,reps:20,note:"På kant, enben när för lätt"},
-    {name:"Tibia raises mot vägg",sets:3,reps:15,note:"Börja lätt – skenben"}
+    {id:"p3e1",name:"Bulgarian split squat",sets:4,reps:8,weight:0,note:"Per ben – håll hantlarna"},
+    {id:"p3e2",name:"Romanian deadlift",sets:4,reps:10,weight:22,note:"Hantelstång eller Z-bar"},
+    {id:"p3e3",name:"Hip thrusts mot stolen",sets:4,reps:15,weight:10,note:"Hantel på höften"},
+    {id:"p3e4",name:"Lateral band walks",sets:3,reps:20,weight:0,note:"Per sida med gummiband"},
+    {id:"p3e5",name:"Standing calf raises",sets:4,reps:20,weight:0,note:"På kant – enben när för lätt"},
+    {id:"p3e6",name:"Tibia raises mot vägg",sets:3,reps:15,weight:0,note:"Börja lätt – förebygger skenbensproblem"}
   ]},
   {day:4,name:"Full body",focus:"Compound-fokus",tags:["helkropp","compound"],exercises:[
-    {name:"Hantel thrusters",sets:4,reps:10,weight:10},
-    {name:"Push up board varianter",sets:3,reps:15},
-    {name:"Towel pull ups",sets:3,reps:null,note:"Till max"},
-    {name:"Z-bar deadlift",sets:4,reps:8,weight:22},
-    {name:"Ab roller",sets:4,reps:8,note:"Progression mot stående"}
+    {id:"p4e1",name:"Hantel thrusters",sets:4,reps:10,weight:10,note:"Squat + press i en rörelse"},
+    {id:"p4e2",name:"Push up board varianter",sets:3,reps:15,weight:0,note:"Byt handtagsposition varje set"},
+    {id:"p4e3",name:"Towel pull ups",sets:3,reps:0,weight:0,note:"Till max"},
+    {id:"p4e4",name:"Z-bar deadlift",sets:4,reps:8,weight:22,note:"Fokus på höftgångsled"},
+    {id:"p4e5",name:"Ab roller",sets:4,reps:8,weight:0,note:"Progression mot stående ab roller"}
   ]},
   {day:5,name:"Push 2",focus:"Variation överkropp",tags:["bröst","axlar","triceps"],exercises:[
-    {name:"Incline push ups (fötter på stol)",sets:4,reps:12},
-    {name:"Arnold press",sets:3,reps:12,weight:8},
-    {name:"Close grip push ups",sets:3,reps:15},
-    {name:"Frontal raises",sets:3,reps:12,weight:5},
-    {name:"Z-bar upright rows",sets:3,reps:12,weight:15}
+    {id:"p5e1",name:"Incline push ups (fötter på stol)",sets:4,reps:12,weight:0,note:"Tränar övre bröst"},
+    {id:"p5e2",name:"Arnold press",sets:3,reps:12,weight:8,note:"Rotera handlederna under rörelsen"},
+    {id:"p5e3",name:"Close grip push ups",sets:3,reps:15,weight:0,note:"Händerna axelbrett"},
+    {id:"p5e4",name:"Frontal raises",sets:3,reps:12,weight:5,note:"Kontrollerat – inga svingningar"},
+    {id:"p5e5",name:"Z-bar upright rows",sets:3,reps:12,weight:15,note:"Armbågar högt"}
   ]},
-  {day:6,name:"Core & Kondition",focus:"Core · Rörlighet · Cardio",tags:["core","mage","rörlighet"],exercises:[
-    {name:"Ab roller",sets:5,reps:10},
-    {name:"Planka",sets:3,reps:null,note:"45 sek per set"},
-    {name:"Side planka",sets:3,reps:null,note:"30 sek per sida"},
-    {name:"Glute bridges",sets:3,reps:20},
-    {name:"Hopprep (från vecka 5)",sets:3,reps:null,note:"2 min per set"},
-    {name:"Höftmobilitet 90/90",sets:1,reps:null,note:"5 min"},
-    {name:"Ankel- & knämobilitet",sets:1,reps:null,note:"5 min"}
+  {day:6,name:"Core & Kondition",focus:"Core · Kondition · Rörlighet",tags:["core","mage","rörlighet","kondition"],exercises:[
+    {id:"p6e1",name:"Ab roller",sets:5,reps:10,weight:0,note:"Progression mot stående"},
+    {id:"p6e2",name:"Planka",sets:3,reps:0,weight:0,note:"45 sek per set – håll kroppen rak"},
+    {id:"p6e3",name:"Side planka",sets:3,reps:0,weight:0,note:"30 sek per sida"},
+    {id:"p6e4",name:"Glute bridges",sets:3,reps:20,weight:0,note:"Pressa glutes i toppen"},
+    {id:"p6e5",name:"Hopprep (från vecka 5)",sets:3,reps:0,weight:0,note:"2 min per set – ta det lugnt med skenbenen"},
+    {id:"p6e6",name:"90/90 höftstretch",sets:2,reps:0,weight:0,note:"60 sek per sida – nyckeln för höftrörlighet"},
+    {id:"p6e7",name:"Hip flexor stretch (knästående)",sets:2,reps:0,weight:0,note:"45 sek per sida – kritisk efter bulgarians"},
+    {id:"p6e8",name:"Pigeon pose",sets:2,reps:0,weight:0,note:"60 sek per sida – glutes och yttre höft"},
+    {id:"p6e9",name:"Cat-cow stretch",sets:3,reps:10,weight:0,note:"Långsamt – ryggrörlighet"},
+    {id:"p6e10",name:"Thoracal rotation (liggandes)",sets:2,reps:10,weight:0,note:"Per sida – övre rygg"},
+    {id:"p6e11",name:"Ankelcirklar + toe raises",sets:2,reps:15,weight:0,note:"Förebygger ankelskador"}
   ]},
   {day:7,name:"Vila",focus:"Återhämtning",rest:true,tags:[],exercises:[]}
 ];
 
+const TRAVEL_PROGRAM = {
+  name:"På resande fot",
+  focus:"Underhåll · Kroppsvikt · 15 min",
+  note:"3–4 pass per vecka. Målet är att behålla, inte bygga. Välj 4–5 övningar per pass.",
+  exercises:[
+    {id:"te1",name:"Push up varianter",sets:3,reps:15,weight:0,note:"Breda / smala / pike – byt varje set"},
+    {id:"te2",name:"Bulgarian split squat (kroppsvikt)",sets:3,reps:10,weight:0,note:"Per ben – använd en stol eller säng"},
+    {id:"te3",name:"Pike push ups",sets:3,reps:10,weight:0,note:"Axelstyrka utan utrustning"},
+    {id:"te4",name:"Single leg Romanian deadlift",sets:3,reps:8,weight:0,note:"Per ben – balans + hamstring"},
+    {id:"te5",name:"Planka",sets:3,reps:0,weight:0,note:"45 sek – core stabilitet"},
+    {id:"te6",name:"Glute bridges",sets:3,reps:20,weight:0,note:"Glutes utan vikt"},
+    {id:"te7",name:"Diamond push ups",sets:3,reps:12,weight:0,note:"Triceps"},
+    {id:"te8",name:"Calf raises",sets:3,reps:25,weight:0,note:"Enben på ett trappsteg om möjligt"}
+  ]
+};
+
+const MOBILITY_15 = [
+  {section:"Andning & aktivering (1 min)",items:[
+    {name:"Diafragmaandning",detail:"8 djupa andetag",how:"Lägg en hand på magen. Andas in 4 sek, håll 2, ut 6. Aktiverar parasympatiska nervsystemet."}
+  ]},
+  {section:"Nacke & axlar (3 min)",items:[
+    {name:"Nacke – långsam rotation",detail:"5 per sida",how:"Vrid huvudet långsamt till varje sida. Håll 3 sek i ytterpositionen."},
+    {name:"Axelcirklar bakåt",detail:"10 reps",how:"Stora, kontrollerade cirklar. Fokus på att dra skulderbladen ihop i bakre positionen."},
+    {name:"Cross-body axelstretch",detail:"30 sek per sida",how:"Dra armen over kroppen, tryck lätt med andra handen strax ovanför armbågen."}
+  ]},
+  {section:"Rygg & thorax (4 min)",items:[
+    {name:"Cat-cow",detail:"10 reps långsamt",how:"På alla fyra. Andas in när ryggen sjunker (ko), ut när ryggen rundas (katt). Mjuk, kontrollerad rörelse."},
+    {name:"Thoracal rotation",detail:"8 per sida",how:"Ligg på sidan med knäna böjda 90°. Rotera överkroppen och följ med blicken. Håll 2 sek."},
+    {name:"Child's pose",detail:"45 sek",how:"Knä på golvet, armarna sträckta framåt, pannan mot golvet. Andas djupt, känn hur ryggen öppnar sig."}
+  ]},
+  {section:"Höfter & ben (5 min)",items:[
+    {name:"90/90 höftstretch",detail:"45 sek per sida",how:"Sitt med ett ben 90° framför, ett 90° bakom. Håll ryggen rak. Byt sida. Den viktigaste enskilda rörlighetsövningen."},
+    {name:"Hip flexor stretch knästående",detail:"40 sek per sida",how:"Ett knä på golvet, andra foten framför. Skjut höften framåt tills du känner sträckning framsida lår/höft."},
+    {name:"Ankelcirklar",detail:"10 per sida",how:"Sittandes. Gör stora cirklar med foten åt båda håll. Kritisk för skenbenen."}
+  ]}
+];
+
+const MOBILITY_30 = [
+  {section:"Andning & aktivering (2 min)",items:[
+    {name:"Diafragmaandning",detail:"10 djupa andetag",how:"Lägg en hand på magen. Andas in 4 sek, håll 2, ut 6."},
+    {name:"Progressiv muskelavslappning",detail:"60 sek",how:"Spänn och slappna av varje muskelgrupp uppifrån och ner. Börja med ansiktet, avsluta med fötterna."}
+  ]},
+  {section:"Nacke, axlar & bröst (6 min)",items:[
+    {name:"Nacke – rotation + lateralflexion",detail:"5 per riktning",how:"Rotation: vrid långsamt. Lateralflexion: luta örat mot axeln. Håll 3 sek var."},
+    {name:"Axelcirklar fram + bakåt",detail:"10 vardera",how:"Stora kontrollerade cirklar. Fokus på skulderbladsrörelse."},
+    {name:"Doorway chest stretch",detail:"45 sek",how:"Stå i en dörröppning, underarmarna mot karmen. Luta kroppen försiktigt framåt. Öppnar bröstkorgen."},
+    {name:"Cross-body axelstretch",detail:"40 sek per sida",how:"Dra armen over kroppen med mothand."},
+    {name:"Overhead tricep stretch",detail:"30 sek per sida",how:"Lyft armen, böj i armbågen, tryck lätt bakåt med andra handen."}
+  ]},
+  {section:"Rygg & thorax (8 min)",items:[
+    {name:"Cat-cow",detail:"15 reps långsamt",how:"På alla fyra. Andas in vid ko-position, ut vid katt."},
+    {name:"Thoracal rotation",detail:"10 per sida",how:"Ligg på sidan, rotera överkroppen. Håll 2 sek i ytterpositionen."},
+    {name:"Thread the needle",detail:"8 per sida",how:"På alla fyra, för en arm under kroppen längs golvet. Håll 3 sek. Öppnar thorax och axlar."},
+    {name:"Child's pose",detail:"60 sek",how:"Armarna sträckta. Alternera med att flytta händerna åt sidorna för att stretcha sidorna av ryggen."},
+    {name:"Sphinx pose (ländrygg)",detail:"60 sek",how:"Ligg på mage, armarna böjda, lyft överkroppen. Mild extension av ländryggen."}
+  ]},
+  {section:"Höfter, ben & fotleder (10 min)",items:[
+    {name:"90/90 höftstretch",detail:"60 sek per sida",how:"Sitt med ett ben 90° framför, ett 90° bakom. Håll ryggen rak. Viktigaste övningen."},
+    {name:"Hip flexor stretch knästående",detail:"50 sek per sida",how:"Knä på golvet, skjut höften framåt."},
+    {name:"Pigeon pose",detail:"60 sek per sida",how:"Från push up-position, för ett knä mot händerna. Sänk höften mot golvet. Djup glute-stretch."},
+    {name:"Liggande piriformis stretch",detail:"45 sek per sida",how:"Ligg på rygg, lägg ena fotleden på motsatt knä, dra benet mot bröstkorgen."},
+    {name:"Standing quad stretch",detail:"30 sek per sida",how:"Stå på ett ben, håll foten bakom med handen. Håll knäna ihop."},
+    {name:"Seated hamstring stretch",detail:"40 sek per sida",how:"Sittandes med ett ben utsträckt, böj mot foten. Håll ryggen rak."},
+    {name:"Ankelcirklar + toe raises",detail:"10 per sida",how:"Cirklar åt båda håll. Toe raises: lyft tårna mot skenbenet – förebygger skenbensproblem."}
+  ]},
+  {section:"Avslutning (4 min)",items:[
+    {name:"Supine twist",detail:"45 sek per sida",how:"Ligg på rygg, ett knä över kroppen. Armarna ut. Låt tyngdkraften göra jobbet."},
+    {name:"Savasana / djupavslappning",detail:"2 min",how:"Ligg stilla, blunda. Kontrollerad djupandning. Signalerar till nervsystemet att återhämtning börjar."}
+  ]}
+];
+
 const DAYS_SV = ["Mån","Tis","Ons","Tor","Fre","Lör","Sön"];
 
+// ── STATE ──────────────────────────────────────────────────────────────────
 let selectedDay = 0;
 let logState = {};
-let logs = JSON.parse(localStorage.getItem('gt_logs') || '[]');
+let timerInterval = null;
+let timerSeconds = 0;
+let timerRunning = false;
+let mobDur = 15;
+let editLogEntry = null;
 
-function save() { try { localStorage.setItem('gt_logs', JSON.stringify(logs)); } catch(e) {} }
+function load(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}}
+function save(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
 
-function getTodayStr() { return new Date().toISOString().split('T')[0]; }
+let logs = load('gt_logs',[]);
+let program = load('gt_program', JSON.parse(JSON.stringify(DEFAULT_PROGRAM)));
+let journals = load('gt_journals',[]);
 
-function getTodayDayIdx() {
-  const d = new Date().getDay();
-  return d === 0 ? 6 : d - 1;
+function saveAll(){save('gt_logs',logs);save('gt_program',program);save('gt_journals',journals)}
+
+// ── UTILS ──────────────────────────────────────────────────────────────────
+function today(){return new Date().toISOString().split('T')[0]}
+function todayDayIdx(){const d=new Date().getDay();return d===0?6:d-1}
+function isLoggedToday(i){return logs.some(l=>l.dayIdx===i&&l.date===today())}
+function toast(msg,type){const t=document.getElementById('toast');t.textContent=msg;t.className='toast'+(type?' '+type:'');t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2400)}
+
+function showScreen(name){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nb').forEach(b=>b.classList.remove('active'));
+  document.getElementById('sc-'+name).classList.add('active');
+  document.getElementById('nav-'+name).classList.add('active');
+  if(name==='history')renderHistory();
+  if(name==='journal')renderJournal();
+  if(name==='mobility')renderMobility();
+  if(name==='log')renderLog();
 }
 
-function isLoggedToday(dayIdx) {
-  const today = getTodayStr();
-  return logs.some(l => l.dayIdx === dayIdx && l.date === today);
+// ── TIMER ──────────────────────────────────────────────────────────────────
+function fmtTime(s){const m=Math.floor(s/60);const sec=s%60;return String(m).padStart(2,'0')+':'+String(sec).padStart(2,'0')}
+
+function renderTimer(){
+  const el=document.getElementById('timerDisplay');
+  if(!el)return;
+  el.textContent=fmtTime(timerSeconds);
+  el.className='timer-display'+(timerSeconds<=10&&timerSeconds>0&&timerRunning?' warning':timerSeconds===0&&!timerRunning&&document.getElementById('timerStarted')?' done-color':'');
 }
 
-function showScreen(name) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById('screen-' + name).classList.add('active');
-  document.getElementById('nav-' + name).classList.add('active');
-  if (name === 'history') renderHistory();
-  if (name === 'progress') renderProgress();
-  if (name === 'log') renderLogScreen();
+function timerStart(){
+  if(timerRunning)return;
+  timerRunning=true;
+  document.getElementById('timerStarted') || document.getElementById('timerDisplay').setAttribute('id-started','1');
+  timerInterval=setInterval(()=>{
+    if(timerSeconds>0){timerSeconds--;renderTimer();}
+    else{clearInterval(timerInterval);timerRunning=false;renderTimer();toast('Vila klar! 💪','ok');}
+  },1000);
 }
 
-function showToast(msg, type) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.className = 'toast' + (type ? ' ' + type : '');
-  t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2500);
-}
+function timerPause(){clearInterval(timerInterval);timerRunning=false;}
 
-// PROGRAM SCREEN
-function renderProgram() {
-  const todayIdx = getTodayDayIdx();
-  const d = new Date();
-  const dateStr = d.toLocaleDateString('sv-SE', {weekday:'long', day:'numeric', month:'long'});
-  document.getElementById('today-label').textContent = dateStr.charAt(0).toUpperCase() + dateStr.slice(1);
+function timerReset(s){clearInterval(timerInterval);timerRunning=false;timerSeconds=s||0;renderTimer();}
 
-  const wr = document.getElementById('weekRow');
-  wr.innerHTML = PROGRAM.map((p, i) => `
-    <div class="week-chip${i === selectedDay ? ' active' : ''}${isLoggedToday(i) ? ' done-chip' : ''}" onclick="selectDay(${i})">
-      <div class="week-chip-day">${DAYS_SV[i]}</div>
-      <div class="week-chip-name">${p.rest ? '—' : p.name}</div>
-      <div class="week-chip-dot"></div>
+function timerSet(s){timerReset(s);}
+
+// ── PROGRAM SCREEN ──────────────────────────────────────────────────────────
+function renderProgram(){
+  const d=new Date();
+  const ds=d.toLocaleDateString('sv-SE',{weekday:'long',day:'numeric',month:'long'});
+  document.getElementById('today-lbl').textContent=ds.charAt(0).toUpperCase()+ds.slice(1);
+  const wr=document.getElementById('weekRow');
+  wr.innerHTML=program.map((p,i)=>`
+    <div class="wc${i===selectedDay?' sel':''}${isLoggedToday(i)?' done':''}" onclick="selectDay(${i})">
+      <div class="wc-day">${DAYS_SV[i]}</div>
+      <div class="wc-name">${p.rest?'—':p.name}</div>
+      <div class="wc-dot"></div>
     </div>`).join('');
-
   renderDayContent();
 }
 
-function selectDay(i) {
-  selectedDay = i;
-  renderProgram();
-}
+function selectDay(i){selectedDay=i;renderProgram();}
 
-function renderDayContent() {
-  const d = PROGRAM[selectedDay];
-  const dc = document.getElementById('dayContent');
-
-  if (d.rest) {
-    dc.innerHTML = `<div class="rest-screen">
-      <div class="rest-icon">💤</div>
-      <div class="rest-title">Vilodag</div>
-      <div class="rest-sub">Återhämtning är när muskeln faktiskt växer.<br>Ta det lugnt idag.</div>
-    </div>`;
+function renderDayContent(){
+  const d=program[selectedDay];
+  const dc=document.getElementById('dayContent');
+  if(d.rest){
+    dc.innerHTML=`<div class="rest-screen"><div class="rest-icon">💤</div><div class="rest-title">Vilodag</div><div class="rest-sub">Återhämtning är när muskeln faktiskt växer.<br>Ta det lugnt idag.</div></div>`;
     return;
   }
-
-  const logged = isLoggedToday(selectedDay);
-  dc.innerHTML = `
-    <div class="day-focus">${d.focus}</div>
-    <div class="muscle-tags">${d.tags.map(t => `<span class="muscle-tag">${t}</span>`).join('')}</div>
-    ${d.exercises.map(ex => `
-      <div class="ex-card">
-        <div class="ex-header">
-          <div class="ex-title">${ex.name}</div>
-          ${ex.note ? `<div class="ex-note">${ex.note}</div>` : ''}
+  const logged=isLoggedToday(selectedDay);
+  dc.innerHTML=`
+    <div style="padding:4px 14px 2px;font-size:12px;color:var(--text2)">${d.focus}</div>
+    <div class="tags">${d.tags.map(t=>`<span class="tag">${t}</span>`).join('')}</div>
+    ${d.exercises.map((ex,ei)=>`
+      <div class="ex-preview">
+        <div class="ex-p-head" style="display:flex;justify-content:space-between;align-items:flex-start">
+          <div>
+            <div class="ex-p-name">${ex.name}</div>
+            ${ex.note?`<div class="ex-p-note">${ex.note}</div>`:''}
+          </div>
+          <button onclick="openEditEx(${selectedDay},${ei})" style="background:none;border:none;color:var(--text3);cursor:pointer;padding:2px 4px;font-size:11px;flex-shrink:0">✏️</button>
         </div>
-        <div class="ex-sets-row">
-          ${Array(ex.sets).fill(0).map((_, i) => `
-            <div class="set-cell">
-              <div class="set-cell-label">SET ${i+1}</div>
-              <div class="set-target">${ex.reps ? `<span>${ex.reps}</span>` : '—'}${ex.weight ? ` · ${ex.weight}kg` : ''}</div>
+        <div class="ex-p-sets">
+          ${Array(ex.sets).fill(0).map((_,si)=>`
+            <div class="set-col">
+              <div class="set-col-lbl">S${si+1}</div>
+              <div class="set-col-val">${ex.reps?`<span>${ex.reps}</span>`:'—'}${ex.weight?` ·${ex.weight}kg`:''}</div>
             </div>`).join('')}
         </div>
       </div>`).join('')}
-    <button class="log-btn" onclick="goToLog()">
-      ${logged ? '✓ Loggat idag — logga igen' : '→ Logga detta pass'}
-    </button>
-    <div style="height:8px"></div>`;
+    ${selectedDay===7?'':/* travel */''}
+    <button class="btn-main" onclick="startLog()">${logged?'↩ Logga igen':'→ Logga detta pass'}</button>
+    <div style="height:10px"></div>`;
 }
 
-function goToLog() {
-  showScreen('log');
+function startLog(){showScreen('log');}
+
+// ── EDIT EXERCISE ──────────────────────────────────────────────────────────
+function openEditEx(dayIdx,exIdx){
+  const ex=program[dayIdx].exercises[exIdx];
+  const sheet=document.getElementById('editExSheet');
+  sheet.innerHTML=`
+    <div class="modal-title">Redigera övning<button class="modal-close" onclick="closeModal('editExModal')">✕</button></div>
+    <div class="edit-lbl">Namn</div>
+    <input class="edit-inp" id="ee-name" value="${ex.name}">
+    <div class="edit-lbl">Sets</div>
+    <input class="edit-inp" id="ee-sets" type="number" value="${ex.sets}" min="1">
+    <div class="edit-lbl">Reps (0 = failure/tid)</div>
+    <input class="edit-inp" id="ee-reps" type="number" value="${ex.reps}" min="0">
+    <div class="edit-lbl">Vikt (kg, 0 = kroppsvikt)</div>
+    <input class="edit-inp" id="ee-weight" type="number" value="${ex.weight}" min="0" step="0.5">
+    <div class="edit-lbl">Anteckning</div>
+    <input class="edit-inp" id="ee-note" value="${ex.note||''}">
+    <button class="btn-main" onclick="saveEditEx(${dayIdx},${exIdx})">Spara</button>
+    <button class="btn-sec" onclick="resetExToDefault(${dayIdx},${exIdx})">Återställ till standard</button>`;
+  document.getElementById('editExModal').classList.remove('hidden');
 }
 
-// LOG SCREEN
-function renderLogScreen() {
-  const d = PROGRAM[selectedDay];
-  const lc = document.getElementById('logContent');
+function saveEditEx(dayIdx,exIdx){
+  const ex=program[dayIdx].exercises[exIdx];
+  ex.name=document.getElementById('ee-name').value||ex.name;
+  ex.sets=parseInt(document.getElementById('ee-sets').value)||ex.sets;
+  ex.reps=parseInt(document.getElementById('ee-reps').value)||0;
+  ex.weight=parseFloat(document.getElementById('ee-weight').value)||0;
+  ex.note=document.getElementById('ee-note').value;
+  save('gt_program',program);
+  closeModal('editExModal');
+  renderProgram();
+  toast('Övning uppdaterad','ok');
+}
 
-  if (d.rest) {
-    lc.innerHTML = `<div class="header"><div class="header-title">Logga pass</div></div>
-      <div class="rest-screen" style="padding-top:40px">
-        <div class="rest-icon">💤</div>
-        <div class="rest-title">Vilodag</div>
-        <div class="rest-sub">Välj ett träningspass i Program-fliken.</div>
-      </div>`;
+function resetExToDefault(dayIdx,exIdx){
+  if(confirm('Återställ till original?')){
+    program[dayIdx].exercises[exIdx]=JSON.parse(JSON.stringify(DEFAULT_PROGRAM[dayIdx].exercises[exIdx]));
+    save('gt_program',program);
+    closeModal('editExModal');
+    renderProgram();
+    toast('Återställd');
+  }
+}
+
+function closeModal(id){document.getElementById(id).classList.add('hidden');}
+
+// ── LOG SCREEN ──────────────────────────────────────────────────────────────
+function renderLog(){
+  const d=program[selectedDay];
+  const lc=document.getElementById('logContent');
+  const isTravel=(selectedDay===8);
+
+  if(!isTravel&&d.rest){
+    lc.innerHTML=`<div class="hdr"><div class="hdr-title">Logga pass</div></div><div class="rest-screen"><div class="rest-icon">💤</div><div class="rest-title">Vilodag</div><div class="rest-sub">Välj ett träningspass i Program-fliken.</div></div>`;
     return;
   }
 
-  if (!logState[selectedDay]) {
-    logState[selectedDay] = {
-      sets: d.exercises.map(ex => Array(ex.sets).fill(null).map(() => ({
-        reps: ex.reps ? String(ex.reps) : '',
-        weight: ex.weight ? String(ex.weight) : '',
-        done: false
-      }))),
-      note: ''
+  const dayData=isTravel?TRAVEL_PROGRAM:d;
+  const key=isTravel?'travel':selectedDay;
+
+  if(!logState[key]){
+    logState[key]={
+      sets:dayData.exercises.map(ex=>Array(ex.sets).fill(null).map(()=>({reps:ex.reps?String(ex.reps):'',weight:ex.weight?String(ex.weight):'',done:false}))),
+      notes:dayData.exercises.map(()=>'')
     };
   }
+  const ls=logState[key];
+  const totalDone=ls.sets.flat().filter(s=>s.done).length;
+  const totalSets=ls.sets.flat().length;
 
-  const ls = logState[selectedDay];
-  const totalDone = ls.sets.flat().filter(s => s.done).length;
-  const totalSets = ls.sets.flat().length;
-
-  lc.innerHTML = `
-    <div class="header">
+  lc.innerHTML=`
+    <div class="hdr">
       <div>
-        <div class="header-title">Dag ${d.day} — ${d.name}</div>
-        <div class="header-sub">${totalDone}/${totalSets} set klara</div>
+        <div class="hdr-title">${dayData.name}</div>
+        <div class="hdr-sub">${totalDone}/${totalSets} set klara</div>
+      </div>
+      <button class="tbtn" style="padding:6px 10px;border-radius:var(--rs);font-size:11px" onclick="showTravelToggle()">Byt pass</button>
+    </div>
+    <div class="timer-bar">
+      <div class="timer-display" id="timerDisplay">${fmtTime(timerSeconds)}</div>
+      <div class="timer-btns">
+        <button class="tbtn preset" onclick="timerSet(60)">1:00</button>
+        <button class="tbtn preset" onclick="timerSet(90)">1:30</button>
+        <button class="tbtn preset" onclick="timerSet(120)">2:00</button>
+        <button class="tbtn preset" onclick="timerSet(180)">3:00</button>
+        <button class="tbtn go" onclick="timerRunning?timerPause():timerStart()" id="timerGoBtn">▶</button>
       </div>
     </div>
-    ${d.exercises.map((ex, ei) => `
+    ${dayData.exercises.map((ex,ei)=>`
       <div class="log-ex-card">
         <div class="log-ex-title">
-          ${ex.name}
-          ${ex.note ? `<span class="log-ex-note">${ex.note}</span>` : ''}
+          <span>${ex.name}</span>
+          ${ex.note?`<span class="log-ex-note-tag">${ex.note}</span>`:''}
         </div>
-        ${ls.sets[ei].map((s, si) => `
-          <div class="log-set-row${s.done ? ' set-done' : ''}" id="row-${ei}-${si}">
-            <div class="log-set-num">S${si+1}</div>
-            <div style="flex:1;display:flex;flex-direction:column;gap:2px">
-              <div class="log-inputs">
-                <div style="flex:1">
-                  <input class="log-input" type="number" inputmode="numeric" placeholder="reps" value="${s.reps}" onchange="updateSet(${ei},${si},'reps',this.value)">
-                  <div class="log-input-label">REPS</div>
-                </div>
-                <div style="flex:1">
-                  <input class="log-input" type="number" inputmode="decimal" placeholder="kg" value="${s.weight}" step="0.5" onchange="updateSet(${ei},${si},'weight',this.value)">
-                  <div class="log-input-label">KG</div>
-                </div>
+        ${ls.sets[ei].map((s,si)=>`
+          <div class="log-set-row${s.done?' sdone':''}" id="lsr-${ei}-${si}">
+            <div class="set-num">S${si+1}</div>
+            <div class="log-inputs">
+              <div class="inp-wrap">
+                <input class="log-inp" type="number" inputmode="numeric" placeholder="reps" value="${s.reps}" onchange="updateSet('${key}',${ei},${si},'reps',this.value)">
+                <div class="inp-lbl">Reps</div>
+              </div>
+              <div class="inp-wrap">
+                <input class="log-inp" type="number" inputmode="decimal" placeholder="kg" value="${s.weight}" step="0.5" onchange="updateSet('${key}',${ei},${si},'weight',this.value)">
+                <div class="inp-lbl">Kg</div>
               </div>
             </div>
-            <button class="log-check${s.done ? ' checked' : ''}" onclick="toggleSet(${ei},${si})">
+            <button class="chk${s.done?' on':''}" onclick="toggleSet('${key}',${ei},${si})">
               <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
             </button>
           </div>`).join('')}
+        <div class="ex-note-row">
+          <div class="ex-note-lbl">Anteckning för övningen</div>
+          <textarea class="ex-note-inp" placeholder="T.ex. kände svaghet vänster sida..." onchange="updateExNote('${key}',${ei},this.value)">${ls.notes[ei]||''}</textarea>
+        </div>
       </div>`).join('')}
-    <div class="note-section">
-      <div class="note-label">Anteckningar</div>
-      <textarea class="note-input" placeholder="Hur gick det? Något att notera..." onchange="logState[${selectedDay}].note=this.value">${ls.note}</textarea>
-    </div>
-    <button class="finish-btn" onclick="finishWorkout()">Slutför pass →</button>
-    <div style="height:8px"></div>`;
+    <button class="btn-main" onclick="finishWorkout('${key}')">Slutför pass →</button>
+    <div style="height:10px"></div>`;
+
+  setInterval(()=>{
+    const btn=document.getElementById('timerGoBtn');
+    if(btn)btn.textContent=timerRunning?'⏸':'▶';
+  },500);
 }
 
-function updateSet(ei, si, field, val) {
-  if (!logState[selectedDay]) return;
-  logState[selectedDay].sets[ei][si][field] = val;
+function showTravelToggle(){
+  if(confirm('Byt till "På resande fot"-passet?')){
+    selectedDay=8;
+    renderLog();
+  }
 }
 
-function toggleSet(ei, si) {
-  if (!logState[selectedDay]) return;
-  logState[selectedDay].sets[ei][si].done = !logState[selectedDay].sets[ei][si].done;
-  renderLogScreen();
+function updateSet(key,ei,si,field,val){
+  if(!logState[key])return;
+  logState[key].sets[ei][si][field]=val;
 }
 
-function finishWorkout() {
-  const d = PROGRAM[selectedDay];
-  const ls = logState[selectedDay];
-  const entry = {
-    date: getTodayStr(),
-    dayIdx: selectedDay,
-    dayName: d.name,
-    focus: d.focus,
-    sets: JSON.parse(JSON.stringify(ls.sets)),
-    note: ls.note,
-    totalDone: ls.sets.flat().filter(s => s.done).length,
-    totalSets: ls.sets.flat().length,
-    exercises: d.exercises.map(e => e.name)
+function updateExNote(key,ei,val){
+  if(!logState[key])return;
+  if(!logState[key].notes)logState[key].notes=[];
+  logState[key].notes[ei]=val;
+}
+
+function toggleSet(key,ei,si){
+  if(!logState[key])return;
+  logState[key].sets[ei][si].done=!logState[key].sets[ei][si].done;
+  const row=document.getElementById(`lsr-${ei}-${si}`);
+  if(row){
+    row.classList.toggle('sdone',logState[key].sets[ei][si].done);
+    const btn=row.querySelector('.chk');
+    if(btn)btn.classList.toggle('on',logState[key].sets[ei][si].done);
+  }
+  const hdr=document.querySelector('#sc-log .hdr .hdr-sub');
+  if(hdr){
+    const total=logState[key].sets.flat().length;
+    const done=logState[key].sets.flat().filter(s=>s.done).length;
+    hdr.textContent=`${done}/${total} set klara`;
+  }
+}
+
+function finishWorkout(key){
+  const isTravel=(key==='travel');
+  const dayData=isTravel?TRAVEL_PROGRAM:program[selectedDay];
+  const ls=logState[key];
+  const entry={
+    date:today(),
+    dayIdx:isTravel?-1:selectedDay,
+    dayName:dayData.name,
+    focus:dayData.focus,
+    sets:JSON.parse(JSON.stringify(ls.sets)),
+    notes:ls.notes||[],
+    totalDone:ls.sets.flat().filter(s=>s.done).length,
+    totalSets:ls.sets.flat().length,
+    exercises:dayData.exercises.map(e=>e.name)
   };
   logs.unshift(entry);
-  save();
-  delete logState[selectedDay];
-  showToast('Pass sparat! 💪', 'success');
-  setTimeout(() => { renderProgram(); showScreen('history'); }, 600);
+  saveAll();
+  delete logState[key];
+  toast('Pass sparat! 💪','ok');
+  setTimeout(()=>{renderProgram();showScreen('history');},600);
 }
 
-// HISTORY
-function renderHistory() {
-  const totalPasses = logs.length;
-  const now = new Date();
-  const weekStart = new Date(now); weekStart.setDate(now.getDate() - ((now.getDay() + 6) % 7));
-  weekStart.setHours(0,0,0,0);
-  const thisWeek = logs.filter(l => new Date(l.date) >= weekStart).length;
-  const totalSets = logs.reduce((a, l) => a + (l.totalDone || 0), 0);
+// ── MOBILITY ──────────────────────────────────────────────────────────────
+function setMob(dur,btn){
+  mobDur=dur;
+  document.querySelectorAll('.mob-btn').forEach(b=>b.classList.remove('sel'));
+  btn.classList.add('sel');
+  renderMobility();
+}
 
-  document.getElementById('statsRow').innerHTML = `
-    <div class="stat-box"><div class="stat-num">${totalPasses}</div><div class="stat-lbl">Totala pass</div></div>
+function renderMobility(){
+  const data=mobDur===15?MOBILITY_15:MOBILITY_30;
+  const mc=document.getElementById('mobContent');
+  mc.innerHTML=`
+    <div style="padding:0 14px 8px;font-size:12px;color:var(--text2)">Kör på morgonen innan frukost för bäst effekt.</div>
+    <div class="mob-section">
+    ${data.map(section=>`
+      <div class="mob-section-title">${section.section}</div>
+      ${section.items.map(item=>`
+        <div class="mob-ex">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div class="mob-ex-name">${item.name}</div>
+            <div class="mob-ex-detail" style="font-size:10px;color:var(--accent);font-weight:600">${item.detail}</div>
+          </div>
+          <div class="mob-ex-how">${item.how}</div>
+        </div>`).join('')}`).join('')}
+    </div>
+    <div style="height:10px"></div>`;
+}
+
+// ── HISTORY ──────────────────────────────────────────────────────────────
+function renderHistory(){
+  const total=logs.length;
+  const now=new Date();
+  const ws=new Date(now);ws.setDate(now.getDate()-((now.getDay()+6)%7));ws.setHours(0,0,0,0);
+  const thisWeek=logs.filter(l=>new Date(l.date)>=ws).length;
+  const totalSets=logs.reduce((a,l)=>a+(l.totalDone||0),0);
+  document.getElementById('statsRow').innerHTML=`
+    <div class="stat-box"><div class="stat-num">${total}</div><div class="stat-lbl">Totala pass</div></div>
     <div class="stat-box"><div class="stat-num">${thisWeek}</div><div class="stat-lbl">Denna vecka</div></div>
     <div class="stat-box"><div class="stat-num">${totalSets}</div><div class="stat-lbl">Totala set</div></div>`;
-
-  const hl = document.getElementById('histList');
-  if (!logs.length) {
-    hl.innerHTML = `<div class="empty"><div class="empty-icon">📋</div><div class="empty-text">Inga pass loggade än.<br>Kör ditt första pass och logga det.</div></div>`;
+  const hl=document.getElementById('histList');
+  if(!logs.length){
+    hl.innerHTML=`<div class="empty"><div class="empty-icon">📋</div><div class="empty-text">Inga pass loggade än.</div></div>`;
     return;
   }
-  hl.innerHTML = logs.slice(0, 30).map(l => `
-    <div class="hist-item">
-      <div class="hist-left">
+  hl.innerHTML=logs.slice(0,40).map((l,i)=>`
+    <div class="hist-item" onclick="openEditLog(${i})">
+      <div class="hist-top">
         <div class="hist-name">${l.dayName}</div>
-        <div class="hist-focus">${l.focus}</div>
-        <div class="hist-meta">${l.totalDone}/${l.totalSets || '?'} set${l.note ? ' · ' + l.note.substring(0, 35) + (l.note.length > 35 ? '…' : '') : ''}</div>
+        <div class="hist-date">${l.date}</div>
       </div>
-      <div class="hist-date">${l.date}</div>
+      <div class="hist-focus">${l.focus}</div>
+      <div class="hist-meta">${l.totalDone}/${l.totalSets||'?'} set · Tryck för att redigera</div>
     </div>`).join('');
 }
 
-// PROGRESS
-function renderProgress() {
-  const bests = {};
-  logs.forEach(log => {
-    if (!log.sets || !log.exercises) return;
-    log.exercises.forEach((exName, ei) => {
-      if (!log.sets[ei]) return;
-      log.sets[ei].forEach(s => {
-        if (!s.done || !s.weight || !s.reps) return;
-        const vol = parseFloat(s.weight) * parseInt(s.reps);
-        if (!bests[exName] || vol > bests[exName].vol)
-          bests[exName] = { reps: s.reps, weight: s.weight, vol, date: log.date };
+// ── EDIT LOG ──────────────────────────────────────────────────────────────
+function openEditLog(idx){
+  const l=logs[idx];
+  const sheet=document.getElementById('editLogSheet');
+  sheet.innerHTML=`
+    <div class="modal-title">${l.dayName} – ${l.date}<button class="modal-close" onclick="closeModal('editLogModal')">✕</button></div>
+    ${l.exercises?l.exercises.map((exName,ei)=>`
+      <div style="margin-bottom:12px">
+        <div style="font-size:12px;font-weight:600;margin-bottom:6px;color:var(--text)">${exName}</div>
+        ${l.sets&&l.sets[ei]?l.sets[ei].map((s,si)=>`
+          <div style="display:flex;gap:8px;align-items:center;margin-bottom:5px">
+            <div style="font-size:10px;color:var(--text3);min-width:22px">S${si+1}</div>
+            <input class="log-inp" style="flex:1" type="number" value="${s.reps}" placeholder="reps" onchange="logs[${idx}].sets[${ei}][${si}].reps=this.value">
+            <input class="log-inp" style="flex:1" type="number" value="${s.weight}" placeholder="kg" step="0.5" onchange="logs[${idx}].sets[${ei}][${si}].weight=this.value">
+          </div>`).join(''):''}
+        ${l.notes&&l.notes[ei]?`<div style="font-size:11px;color:var(--text2);padding:4px 0">${l.notes[ei]}</div>`:''}
+      </div>`).join(''):'<div style="color:var(--text2);font-size:13px">Ingen detaljdata sparad.</div>'}
+    <button class="btn-main" onclick="saveEditLog(${idx})">Spara ändringar</button>
+    <button class="btn-sec" style="color:var(--red)" onclick="deleteLog(${idx})">Ta bort detta pass</button>`;
+  document.getElementById('editLogModal').classList.remove('hidden');
+}
+
+function saveEditLog(idx){save('gt_logs',logs);closeModal('editLogModal');renderHistory();toast('Pass uppdaterat','ok');}
+
+function deleteLog(idx){
+  if(confirm('Ta bort detta pass permanent?')){
+    logs.splice(idx,1);
+    save('gt_logs',logs);
+    closeModal('editLogModal');
+    renderHistory();
+    toast('Pass borttaget');
+  }
+}
+
+// ── PROGRESS ──────────────────────────────────────────────────────────────
+function renderProgress(){
+  const bests={};
+  logs.forEach(log=>{
+    if(!log.sets||!log.exercises)return;
+    log.exercises.forEach((exName,ei)=>{
+      if(!log.sets[ei])return;
+      log.sets[ei].forEach(s=>{
+        if(!s.weight||!s.reps)return;
+        const vol=parseFloat(s.weight)*parseInt(s.reps);
+        if(!bests[exName]||vol>bests[exName].vol)
+          bests[exName]={reps:s.reps,weight:s.weight,vol,date:log.date};
       });
     });
   });
-
-  const pl = document.getElementById('progList');
-  const entries = Object.entries(bests);
-  if (!entries.length) {
-    pl.innerHTML = `<div class="empty"><div class="empty-icon">📈</div><div class="empty-text">Logga pass med vikt och reps<br>för att se din progression.</div></div>`;
-    return;
-  }
-  pl.innerHTML = entries.map(([name, b]) => `
+  const pl=document.getElementById('progList');
+  if(!pl)return;
+  const entries=Object.entries(bests);
+  if(!entries.length){pl.innerHTML=`<div class="empty"><div class="empty-icon">📈</div><div class="empty-text">Logga pass med vikt och reps för att se progression.</div></div>`;return;}
+  pl.innerHTML=entries.map(([name,b])=>`
     <div class="prog-item">
-      <div>
-        <div class="prog-name">${name}</div>
-        <div class="prog-date">${b.date}</div>
-      </div>
-      <div class="prog-best">${b.weight}kg × ${b.reps}</div>
+      <div><div class="prog-name">${name}</div><div class="prog-date">${b.date}</div></div>
+      <div class="prog-best">${b.weight}kg×${b.reps}</div>
     </div>`).join('');
 }
 
-// EXPORT / IMPORT
-function exportData() {
-  const data = { version: 1, exported: new Date().toISOString(), logs };
-  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = 'garage_training_' + getTodayStr() + '.json';
-  a.click();
-  showToast('Data exporterad!', 'success');
+// ── JOURNAL ──────────────────────────────────────────────────────────────
+function renderJournal(){
+  const jl=document.getElementById('journalList');
+  if(!journals.length){
+    jl.innerHTML=`<div class="empty"><div class="empty-icon">📓</div><div class="empty-text">Inga anteckningar än.<br>Tryck "Ny" för att börja skriva.</div></div>`;
+    return;
+  }
+  jl.innerHTML=journals.map((j,i)=>`
+    <div class="journal-entry" onclick="openJournalEntry(${i})">
+      <div class="journal-date">${j.date}</div>
+      <div class="journal-preview">${j.text}</div>
+    </div>`).join('');
 }
 
-function importData(e) {
-  const file = e.target.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = function(ev) {
-    try {
-      const data = JSON.parse(ev.target.result);
-      if (!data.logs || !Array.isArray(data.logs)) throw new Error('Fel format');
-      if (confirm(`Importera ${data.logs.length} loggade pass? Din nuvarande data ersätts.`)) {
-        logs = data.logs;
-        save();
-        showToast('Data importerad!', 'success');
-      }
-    } catch(err) {
-      showToast('Fel: ogiltigt filformat', '');
-    }
-  };
-  reader.readAsText(file);
-  e.target.value = '';
+function openJournalNew(){
+  openJournalEntry(-1);
 }
 
-function confirmReset() {
-  if (confirm('Är du säker? All träningsdata raderas permanent.')) {
-    logs = [];
-    save();
-    showToast('Data återställd');
+function openJournalEntry(idx){
+  const isNew=(idx===-1);
+  const entry=isNew?{date:today(),text:''}:journals[idx];
+  const sheet=document.getElementById('journalSheet');
+  sheet.innerHTML=`
+    <div class="modal-title">${isNew?'Ny anteckning':'Redigera'}<button class="modal-close" onclick="closeModal('journalModal')">✕</button></div>
+    <div class="journal-write">
+      <textarea class="journal-textarea" id="jtext" placeholder="Skriv allt mellan himmel och jord...">${entry.text}</textarea>
+      <div class="journal-toolbar">
+        <input type="date" class="journal-date-input" id="jdate" value="${entry.date}">
+        <div style="display:flex;gap:6px">
+          ${!isNew?`<button class="tbtn" style="color:var(--red);padding:6px 10px" onclick="deleteJournal(${idx})">Ta bort</button>`:''}
+          <button class="tbtn go" style="padding:6px 14px" onclick="saveJournal(${idx})">Spara</button>
+        </div>
+      </div>
+    </div>`;
+  document.getElementById('journalModal').classList.remove('hidden');
+}
+
+function saveJournal(idx){
+  const text=document.getElementById('jtext').value;
+  const date=document.getElementById('jdate').value;
+  if(!text.trim()){toast('Skriv något först');return;}
+  if(idx===-1){journals.unshift({date,text});}
+  else{journals[idx]={date,text};}
+  save('gt_journals',journals);
+  closeModal('journalModal');
+  renderJournal();
+  toast('Sparad','ok');
+}
+
+function deleteJournal(idx){
+  if(confirm('Ta bort anteckning?')){
+    journals.splice(idx,1);
+    save('gt_journals',journals);
+    closeModal('journalModal');
+    renderJournal();
   }
 }
 
-// INIT
-selectedDay = getTodayDayIdx();
+// ── EXPORT / IMPORT ──────────────────────────────────────────────────────
+function exportData(){
+  const data={version:2,exported:new Date().toISOString(),logs,program,journals};
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  a.download='garage_training_'+today()+'.json';a.click();
+  toast('Exporterad!','ok');
+}
+
+function importData(e){
+  const file=e.target.files[0];if(!file)return;
+  const r=new FileReader();
+  r.onload=ev=>{
+    try{
+      const d=JSON.parse(ev.target.result);
+      if(!d.logs)throw new Error();
+      if(confirm(`Importera data? (${d.logs.length} pass, ${(d.journals||[]).length} journalposter)`)){
+        logs=d.logs;
+        if(d.program)program=d.program;
+        if(d.journals)journals=d.journals;
+        saveAll();toast('Importerad!','ok');
+      }
+    }catch{toast('Fel: ogiltigt format');}
+  };
+  r.readAsText(file);e.target.value='';
+}
+
+function confirmReset(){
+  if(confirm('Radera ALL data permanent?')){
+    logs=[];journals=[];program=JSON.parse(JSON.stringify(DEFAULT_PROGRAM));
+    saveAll();toast('Återställt');
+  }
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────
+selectedDay=todayDayIdx();
 renderProgram();
+renderMobility();
 </script>
 </body>
 </html>
